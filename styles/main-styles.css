@@ -1,0 +1,170 @@
+body {
+    background-image: url("bgimage.png");
+    background-repeat: repeat-x;
+    background-repeat: repeat-y;
+    padding-top: 15px;
+}
+
+#header {
+    width: 100%;
+    height: 175px;
+    position: relative;
+}
+
+#header #inner-header {
+    margin: 0 auto;
+    float: none;
+    height: 100px;
+    text-align: center;
+    z-index: 1;
+}
+
+#header #inner-header #menu {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    margin-bottom: 15px;
+}
+
+#menu li {
+    display: inline-block;
+    float: left;
+    margin-bottom: 5px;
+    border-left: 2px solid saddlebrown;
+    padding-left: 5px;
+    height: 25px;
+    line-height: 25px;
+}
+
+#menu li:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-left-color: red;
+    color: white;
+}
+
+#menu li a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+#nav {
+    display: block;
+    height: 50px;
+}
+
+#image {
+    display: inline-block;
+    height: 100px;
+}
+
+#inner-nav {
+    float: none;
+    margin: 0 auto;
+}
+
+#inner-image {
+    width: 100px;
+    height: 100px;
+    float: none;
+    margin: 0 auto;
+}
+
+#logout {
+    float: right;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    z-index: 2;
+}
+
+#logout-button {
+    height: 25px;
+    width: 70px;
+    line-height: 13px;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+table {
+    display: block;
+}
+
+#main {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    height: 50px;
+    color: #999999;
+}
+
+input[type=text],
+input[type=password] {
+    margin-bottom: 10px;
+}
+
+#login-form {
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+
+#register-form {
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+
+#messages {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#messages li {
+    text-align: center;
+}
+
+#categories-table {
+    float: none;
+    margin: 0 auto;
+}
+
+#categories-nav {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#categories-nav li {
+    display: inline-block;
+    height: 50px;
+    margin-bottom: 7px;
+    line-height: 45px;
+    font-size: 1.2em;
+    margin-left: 2px;
+    width: 165px;
+}
+
+#categories-nav li>a {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+}
