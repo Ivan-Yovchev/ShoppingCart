@@ -15,8 +15,9 @@ include_once 'config/config.php';
 include_once 'lib/auth.php';
 include_once 'lib/database.php';
 include_once 'controllers/MasterController.php';
-include_once 'controllers/MasterController.php';
 include_once 'models/master.php';
+include_once 'models/bindingModels/LoginBindingModel.php';
+include_once 'models/bindingModels/RegisterBindingModel.php';
 
 if(!empty($request)){
     if(0 === strpos($request, $request_home)) {

@@ -9,12 +9,23 @@ class UsersController extends MasterController{
     }
 
     public function index(){
+        $this->authorizeUser();
         $this->users = $this->model->find();
         $this->renderView('index.php');
     }
 
-    public function view($id){
-        $this->users = $this->model->get($id);
+    public function view($username){
+        $this->authorizeUser();
+
+        $currentUserUsername = $_SESSION['username'];
+
+        if(empty($username)){
+            $username = $currentUserUsername;
+        } else if($username != $currentUserUsername){
+            $this->redirect("users", "view", array($currentUserUsername));
+        }
+
+        $this->users = $this->model->get($username);
         $this->renderView('index.php');
     }
 }

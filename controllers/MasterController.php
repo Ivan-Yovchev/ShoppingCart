@@ -63,11 +63,51 @@ class MasterController {
         return $_SERVER['REQUEST_METHOD'] == 'POST';
     }
 
-    protected function has_logged_user(){
+    protected function hasLoggedUser(){
         return $this->auth->is_logged_in();
     }
 
-    protected function get_logged_user(){
+    protected function getLoggedUser(){
         return $this->auth->get_logged_user();
+    }
+
+    private function addMessage($msgSessionkey, $msgText) {
+        if (!isset($_SESSION[$msgSessionkey])) {
+            $_SESSION[$msgSessionkey] = [];
+        }
+        array_push($_SESSION[$msgSessionkey], $msgText);
+    }
+
+    protected function addErrorMessage($errorMsg) {
+        $this->addMessage(ERROR_MESSAGES_SESSION_KEY, $errorMsg);
+    }
+
+    protected function addInfoMessage($infoMsg) {
+        $this->addMessage(INFO_MESSAGES_SESSION_KEY, $infoMsg);
+    }
+
+    protected function authorizeUser(){
+        if(!$this->hasLoggedUser()){
+            $this->addErrorMessage("Please login first");
+            $this->redirect("account", "login");
+        }
+    }
+
+    protected function protectLoginAndRegister(){
+        if(!$this->hasLoggedUser()){
+            $this->addErrorMessage("Please logout first");
+        }
+    }
+
+    protected function bind($obj = NULL) {
+        if(!is_object($obj) == NULL){
+            $obj = new \stdClass();
+        }
+
+        foreach($_POST as $var => $value){
+            $obj->$var = trim($value);
+        }
+
+        return $obj;
     }
 }

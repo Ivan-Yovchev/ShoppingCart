@@ -28,8 +28,8 @@ class MasterModel {
         $this->db = $db_object::get_db();
     }
 
-    public function get($id){
-        return $this->find(array('where' => 'id='.$id));
+    public function get($username){
+        return $this->find(array('where' => "username='" . $username . "'"));
     }
 
     public function find($args = array()){

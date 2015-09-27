@@ -7,36 +7,36 @@ class AccountModel extends MasterModel {
         parent::__constuct(array('table' => 'users'));
     }
 
-    public function register($username, $password, $conf_pass){
-        if($password != $conf_pass){
-            return false;
+    public function register($model){
+        if($model->password != $model->confirm){
+            return "Passwords don't match";
         }
 
-        $users =  $this->find(array('columns' => 'COUNT(Id) as count', 'where' => "username='" . $username . "'"));
+        $users =  $this->find(array('columns' => 'COUNT(Id) as count', 'where' => "username='" . $model->username . "'"));
         if($users[0]['count'] != 0){
-            return false;
+            return "Username taken";
         }
 
-        $hash_pass = password_hash($password, PASSWORD_BCRYPT);
+        $hash_pass = password_hash($model->password, PASSWORD_BCRYPT);
         $money = '2000';
         $userRole = 'User';
 
         $registerStatement =
             $this->db->prepare("INSERT INTO Users (username, password, role, money) VALUES (?, ?, ?, ?)");
-        $registerStatement->bind_param("ssss", $username, $hash_pass, $userRole, $money);
+        $registerStatement->bind_param("ssss", $model->username, $hash_pass, $userRole, $money);
         $registerStatement->execute();
         return true;
     }
 
-    public function login($username, $password){
-        $loginStatement = $this->find(array('where' => "username='" . $username . "'"));
+    public function login($model){
+        $loginStatement = $this->find(array('where' => "username='" . $model->username . "'"));
         if(empty($loginStatement)){
-            return false;
+            return "No user with username " . $model->username;
         }
 
         $userToLogin = $loginStatement[0];
-        if(!password_verify($password, $userToLogin['password'])){
-            return false;
+        if(!password_verify($model->password, $userToLogin['password'])){
+            return "Wrong password";
         }
 
         $_SESSION['username'] = $userToLogin['username'];
@@ -49,4 +49,5 @@ class AccountModel extends MasterModel {
         unset ($_SESSION['username']);
         unset ($_SESSION['user_id']);
     }
+
 }

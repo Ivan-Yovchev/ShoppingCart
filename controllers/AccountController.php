@@ -1,7 +1,8 @@
 <?php
 
 namespace Controllers;
-
+use BindingModels\LoginBindingModel;
+use BindingModels\RegisterBindingModel;
 
 class AccountController extends MasterController{
     public function __construct(){
@@ -9,17 +10,22 @@ class AccountController extends MasterController{
     }
 
     public function register(){
+        if($this->hasLoggedUser()){
+            $this->logout(true);
+            $this->redirect("account", "register");
+        }
+
         if(parent::isPost() == true){
-            $username = $_POST['username'];
-            $password = $_POST['pass'];
-            $confirmPassword = $_POST['pass_confirm'];
+            $registerModelBind = $this->bind(new RegisterBindingModel());
 
-            $isRegistered = $this->model->register($username, $password, $confirmPassword);
+            $registerResponse = $this->model->register($registerModelBind);
 
-            if($isRegistered){
-                $this->model->login($username, $password);
+            if(is_bool($registerResponse) && $registerResponse == true){
+                $this->model->login($registerModelBind);
+                $this->addInfoMessage($registerModelBind->username . ", successfully registered");
                 $this->redirect("users", "view", array($_SESSION['user_id']));
             } else {
+                $this->addErrorMessage($registerResponse);
                 $this->redirect("account", "register");
             }
         }
@@ -28,15 +34,21 @@ class AccountController extends MasterController{
     }
 
     public function login(){
+        if($this->hasLoggedUser()){
+            $this->logout(true);
+            $this->redirect("account", "login");
+        }
+
         if(parent::isPost() == true){
-            $username = $_POST['username'];
-            $password = $_POST['password'];
+            $loginModelBind = $this->bind(new LoginBindingModel());
 
-            $isLogged = $this->model->login($username, $password);
+            $loggingResponse = $this->model->login($loginModelBind);
 
-            if($isLogged){
+            if(is_bool($loggingResponse) && $loggingResponse == true){
+                $this->addInfoMessage($loginModelBind->username . " successfully logged in");
                 $this->redirect("users", "view", array($_SESSION['user_id']));
             } else {
+                $this->addErrorMessage($loggingResponse);
                 $this->redirect("account", "login");
             }
         }
@@ -44,9 +56,13 @@ class AccountController extends MasterController{
         $this->renderView('login.php');
     }
 
-    public function logout(){
+    public function logout($rederect = false){
+        $this->authorizeUser();
         $this->model->logout();
         $this->auth->clean_auth();
-        $this->redirect("master", "index");
+
+        if($rederect == false) {
+            $this->redirect("master", "index");
+        }
     }
 }

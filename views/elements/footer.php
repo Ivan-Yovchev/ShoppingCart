@@ -1,5 +1,3 @@
-    <div id="footer">
-        Footer (c)
-    </div>
+    <footer>(c) 2015 Shopping Cart</footer>
 </body>
 </html>
