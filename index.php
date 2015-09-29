@@ -18,6 +18,7 @@ include_once 'controllers/MasterController.php';
 include_once 'models/master.php';
 include_once 'models/bindingModels/LoginBindingModel.php';
 include_once 'models/bindingModels/RegisterBindingModel.php';
+include_once 'models/bindingModels/AddToCartBindingModel.php';
 
 if(!empty($request)){
     if(0 === strpos($request, $request_home)) {
@@ -34,7 +35,7 @@ if(!empty($request)){
             list($controller, $method) = $components;
 
             if(isset($components[2])){
-                $param = $components[2];
+                $param = explode('/', $components[2]);
             }
 
             $admin_folder = $admin_routing ? "admin/" : '';
@@ -49,7 +50,7 @@ $controller_class = $admin_namespace . '\Controllers\\' . ucfirst($controller) .
 $instance = new $controller_class();
 
 if(method_exists($instance, $method)){
-    call_user_func_array(array($instance, $method), array($param));
+    call_user_func_array(array($instance, $method), $param);
 }
 
 $db_object = \Lib\Database::get_Instance();

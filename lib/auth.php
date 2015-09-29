@@ -11,12 +11,9 @@ class Auth {
         session_set_cookie_params(1800, "/");
         session_start();
 
-        if(!empty($_SESSION['username'])){
+        if(!empty($_SESSION['user'])){
             self::$is_logged_in = true;
-            self::$logged_user = array(
-                'id' => $_SESSION['user_id'],
-                'username' => $_SESSION['username']
-            );
+            self::$logged_user = $_SESSION['user'][0];
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace Models;
 
+include_once "user.php";
+
 class AccountModel extends MasterModel {
     public function __construct($args = array()){
         parent::__constuct(array('table' => 'users'));
@@ -17,10 +19,11 @@ class AccountModel extends MasterModel {
             return "Username taken";
         }
 
+        var_dump($model);
+
         $hash_pass = password_hash($model->password, PASSWORD_BCRYPT);
         $money = '2000';
         $userRole = 'User';
-
         $registerStatement =
             $this->db->prepare("INSERT INTO Users (username, password, role, money) VALUES (?, ?, ?, ?)");
         $registerStatement->bind_param("ssss", $model->username, $hash_pass, $userRole, $money);
@@ -39,15 +42,20 @@ class AccountModel extends MasterModel {
             return "Wrong password";
         }
 
-        $_SESSION['username'] = $userToLogin['username'];
-        $_SESSION['user_id'] = $userToLogin['id'];
+        $usersModel = new UserModel();
+        $user = $usersModel->getUserById(intval($userToLogin['id']));
+        $_SESSION['user'] = $user;
+//        $_SESSION['username'] = $userToLogin['username'];
+//        $_SESSION['user_id'] = $userToLogin['id'];
+//        $_SESSION['money'] = $userToLogin['money'];
 
         return true;
     }
 
     public function logout() {
-        unset ($_SESSION['username']);
-        unset ($_SESSION['user_id']);
+//        unset ($_SESSION['username']);
+//        unset ($_SESSION['user_id']);
+        unset($_SESSION['user']);
     }
 
 }

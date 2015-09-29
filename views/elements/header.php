@@ -12,6 +12,13 @@
     <header id="header">
         <div id="logout">
             <?php if($this->hasLoggedUser()): ?>
+                <a href="/cart/users/cart">Cart</a>
+                <span>
+                    <?php
+                    $balance = floatval($this->getLoggedUser()['money']);
+                    echo $balance;
+                    ?>
+                </span>
                 <a href="/cart/account/logout" id="logout-button" class="btn btn-info">Logout</a>
             <?php endif; ?>
         </div>
@@ -27,9 +34,14 @@
                 <div id="inner-nav" class="col-xs-12">
                     <?php if($this->hasLoggedUser()): ?>
                         <ul id="menu" class="col-xs-12">
-                            <li class="col-xs-6 col-sm-3"><a href="/cart/">Home</a></li>
+                            <?php if($this->hasLoggedUser()): ?>
+                                <li class="col-xs-6 col-sm-3"><a href="/cart/users/index/<?= $this->getLoggedUser()['username'] ?>">Home</a></li>
+                            <?php endif; ?>
+                            <?php if(!$this->hasLoggedUser()): ?>
+                                <li class="col-xs-6 col-sm-3"><a href="/cart">Home</a></li>
+                            <?php endif; ?>
                             <li class="col-xs-6 col-sm-3"><a href="/cart/categories/index">Categories</a></li>
-                            <li class="col-xs-6 col-sm-3"><a href="/cart/products/">Products</a></li>
+                            <li class="col-xs-6 col-sm-3"><a href="/cart/products/index/all">Products</a></li>
                             <li class="col-xs-6 col-sm-3"><a href="/cart/users/">Users</a></li>
                         </ul>
                     <?php endif; ?>

@@ -2,7 +2,7 @@
     <ul id="categories-nav">
         <?php foreach($this->categories as $category): ?>
             <li class="label label-primary">
-                <a href="http://localhost/cart">
+                <a href="http://localhost/cart/products/index/<?= htmlentities(urlencode(strtolower($category['Name']))) ?>">
                     <?= htmlentities($category['Name']) ?>
                 </a>
             </li>

@@ -32,6 +32,50 @@ class MasterModel {
         return $this->find(array('where' => "username='" . $username . "'"));
     }
 
+    public function add( $pairs ) {
+        // Get keys and values separately
+        $keys = array_keys( $pairs );
+        $values = array();
+
+        // Escape values, like prepared statement
+        foreach( $pairs as $key => $value ) {
+            $values[] = "'" . $this->db->real_escape_string( $value ) . "'";
+        }
+
+        $keys = implode( $keys, ',' );
+        $values = implode( $values, ',' );
+
+        $query = "insert into {$this->table}($keys) values($values)";
+
+// 		var_dump($query);
+
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
+    }
+
+    public function delete( $id ) {
+        $query = "DELETE FROM {$this->table} WHERE id=" . intval( $id );
+
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
+    }
+
+    public function update( $model ) {
+        $query = "UPDATE " . $this->table . " SET ";
+
+        foreach( $model as $key => $value ) {
+            if( $key === 'id' ) continue;
+            $query .= "$key = '" . $this->db->real_escape_string( $value ) . "',";
+        }
+        $query = rtrim( $query, "," );
+        $query .= " WHERE id = " . $model['id'];
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
+    }
+
     public function find($args = array()){
         $defaults = array(
             'table' => $this->table,

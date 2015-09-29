@@ -17,7 +17,7 @@ class UsersController extends MasterController{
     public function view($username){
         $this->authorizeUser();
 
-        $currentUserUsername = $_SESSION['username'];
+        $currentUserUsername = $this->getLoggedUser()['username'];
 
         if(empty($username)){
             $username = $currentUserUsername;
@@ -27,5 +27,48 @@ class UsersController extends MasterController{
 
         $this->users = $this->model->get($username);
         $this->renderView('index.php');
+    }
+
+    public function checkout(){
+        $totalPrice = 0;
+        if(empty($_SESSION['cart'])){
+            $_SESSION['cart'] = array();
+        }
+
+        foreach($_SESSION['cart'] as $product){
+            $quantity = $product['quantity'];
+            $price = floatval($product['product']['Price']);
+            $totalPrice += $quantity * $price;
+        }
+
+        $userId = intval($this->getLoggedUser()['id']);
+        $user = $this->model->getUserById($userId);
+        $userBalance = floatval($user[0]['money']);
+
+        if($totalPrice > $userBalance){
+            $this->addErrorMessage("Not enough money. Consider removing some items from the cart");
+            $this->redirect("users", "cart");
+        }
+
+        $response = $this->model->checkout($userId, $userBalance, $totalPrice);
+        if($response == 1){
+            $_SESSION['cart'] = array();
+            $this->addInfoMessage("Cart checked out successfully");
+            $this->redirect("users", "view", array($user[0]['username']));
+        } else {
+            $this->addErrorMessage("An error occurred please try again");
+            $this->redirect("users", "cart");
+        }
+    }
+
+    public function cart(){
+        $this->authorizeUser();
+
+        if(empty($_SESSION['cart'])){
+            $_SESSION['cart'] = array();
+        }
+        $this->productsInCart = $_SESSION['cart'];
+
+        $this->renderView('cart.php');
     }
 }
