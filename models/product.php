@@ -11,6 +11,13 @@ class ProductModel extends MasterModel {
         return $this->find(array('where' => "id=" . $id));
     }
 
+    public function getUserProduct($productId){
+        return $this->find(array(
+            'columns' => 'id, Name, Price, PromotionId, CategoryId',
+            'where' => "id=" . $productId
+        ));
+    }
+
     public function getProductByName($productName){
         $productName = urldecode($productName);
         return $this->find(array('where' => "LOWER(Name)='" . $productName . "'"));

@@ -19,6 +19,7 @@ include_once 'models/master.php';
 include_once 'models/bindingModels/LoginBindingModel.php';
 include_once 'models/bindingModels/RegisterBindingModel.php';
 include_once 'models/bindingModels/AddToCartBindingModel.php';
+include_once 'models/bindingModels/SellProductBindingModel.php';
 
 if(!empty($request)){
     if(0 === strpos($request, $request_home)) {

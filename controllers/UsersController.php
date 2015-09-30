@@ -2,6 +2,11 @@
 
 namespace Controllers;
 
+use BindingModels\SellProductBindingModel;
+
+include_once "UserproductsController.php";
+include_once "ProductsController.php";
+include_once "CategoriesController.php";
 
 class UsersController extends MasterController{
     public function __construct(){
@@ -17,7 +22,41 @@ class UsersController extends MasterController{
     public function view($username){
         $this->authorizeUser();
 
+        if(parent::isPost()){
+            $sellProductModel = $this->bind(new SellProductBindingModel());
+            $response = $this->model->sellItem($sellProductModel);
+
+            if($response == 1){
+                $this->addInfoMessage("Successfully sold");
+            } else if($response == 0){
+                $this->addErrorMessage("An error has occurred. Please try again");
+            } else {
+                $this->addErrorMessage($response);
+            }
+        }
+
         $currentUserUsername = $this->getLoggedUser()['username'];
+        $currentUserId = $this->getLoggedUser()['id'];
+
+        $userProductsController = new UserproductsController();
+        $userProducts = $userProductsController->model->getUserProducts($currentUserId);
+
+        $productsController = new ProductsController();
+        $categoriesController = new CategoriesController();
+
+        for($i = 0; $i < count($userProducts); $i++){
+            $productId = $userProducts[$i]['ProductId'];
+            $userProduct = $productsController->model->getUserProduct($productId)[0];
+            $userProducts[$i]["product"] = $userProduct;
+
+            $categoryId = $userProduct["CategoryId"];
+            $category = $categoriesController->model->getCategoryById($categoryId)[0];
+            $userProducts[$i]['category'] = $category;
+        }
+
+//        foreach($userProducts as $product){
+//            var_dump($product);
+//        }
 
         if(empty($username)){
             $username = $currentUserUsername;
@@ -25,7 +64,8 @@ class UsersController extends MasterController{
             $this->redirect("users", "view", array($currentUserUsername));
         }
 
-        $this->users = $this->model->get($username);
+        $this->user = $this->model->getUserById($currentUserId)[0];
+        $this->products = $userProducts;
         $this->renderView('index.php');
     }
 

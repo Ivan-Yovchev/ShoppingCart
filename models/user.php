@@ -19,12 +19,15 @@ class UserModel extends MasterModel {
             $model = new UserproductsModel();
 
             foreach($_SESSION['cart'] as $product){
-                $pairs = array(
-                    'UserId' => $id,
-                    'ProductId' => $product['product']['id']);
-                $response = $model->giveUserProducts($pairs);
-                if($response == 0){
-                    return 0;
+                $quantity = intval($product['quantity']);
+                for($i = 0; $i < $quantity; $i++) {
+                    $pairs = array(
+                        'UserId' => $id,
+                        'ProductId' => $product['product']['id']);
+                    $response = $model->giveUserProducts($pairs);
+                    if($response == 0){
+                        return 0;
+                    }
                 }
             }
         }
@@ -34,6 +37,37 @@ class UserModel extends MasterModel {
 
     private function subtractMoney($id, $balance, $price){
         $model = array('id' => $id, 'money' => $balance - $price);
+        return $this->update($model);
+    }
+
+    public function sellItem($bindingModel){
+        $model = new UserproductsModel();
+
+        $quantity = intval($model->getUserProduct($bindingModel->userId, $bindingModel->productId)[0]['Quantity']);
+        if($quantity < intval($bindingModel->quantity) || intval($bindingModel->quantity) < 1){
+            return "Invalid Quantity";
+        }
+
+        for($i = 0; $i < intval($bindingModel->quantity); $i++){
+            $response = $model->deleteItem($bindingModel->userId, $bindingModel->productId);
+            if($response == 1){
+                $user = $this->getUserById($bindingModel->userId);
+                $money = floatval($user[0]['money']);
+                $moneyResponse = $this->giveMoney($bindingModel->userId, $money + floatval($bindingModel->price));
+                if($moneyResponse == 0){
+                    return 0;
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    private function giveMoney($userId, $amount){
+        $model = array(
+            'id' => $userId,
+            'money' => $amount
+        );
         return $this->update($model);
     }
 }
