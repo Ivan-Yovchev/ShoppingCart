@@ -23,6 +23,24 @@ class ProductModel extends MasterModel {
         return $this->find(array('where' => "LOWER(Name)='" . $productName . "'"));
     }
 
+    public function take($productId, $quantity){
+        $product = $this->getProductById($productId)[0];
+        $model = array(
+            'id' => $productId,
+            'Quantity' => intval($product['Quantity']) - intval($quantity)
+        );
+        return $this->update($model);
+    }
+
+    public function give($productId, $quantity){
+        $product = $this->getProductById($productId)[0];
+        $model = array(
+            'id' => $productId,
+            'Quantity' => intval($product['Quantity']) + intval($quantity)
+        );
+        return $this->update($model);
+    }
+
     public function addToCart($model){
         $product = $this->getProductById(intval($model->id));
         $product = $product[0];

@@ -3,6 +3,7 @@
 namespace Models;
 
 include_once "userproducts.php";
+include_once "product.php";
 
 class UserModel extends MasterModel {
     public function __construct($args = array()){
@@ -16,16 +17,22 @@ class UserModel extends MasterModel {
     public function checkout($id, $balance, $price){
         $response = $this->subtractMoney($id, $balance, $price);
         if($response == 1){
-            $model = new UserproductsModel();
+            $userProductsModel = new UserproductsModel();
+            $productsModel = new ProductModel();
 
             foreach($_SESSION['cart'] as $product){
                 $quantity = intval($product['quantity']);
                 for($i = 0; $i < $quantity; $i++) {
-                    $pairs = array(
-                        'UserId' => $id,
-                        'ProductId' => $product['product']['id']);
-                    $response = $model->giveUserProducts($pairs);
-                    if($response == 0){
+                    $takeResponse = $productsModel->take($product['product']['id'], 1);
+                    if($takeResponse == 1) {
+                        $pairs = array(
+                            'UserId' => $id,
+                            'ProductId' => $product['product']['id']);
+                        $response = $userProductsModel->giveUserProducts($pairs);
+                        if($response == 0){
+                            return 0;
+                        }
+                    } else {
                         return 0;
                     }
                 }
@@ -41,20 +48,26 @@ class UserModel extends MasterModel {
     }
 
     public function sellItem($bindingModel){
-        $model = new UserproductsModel();
+        $userProductsModel = new UserproductsModel();
+        $productsModel = new ProductModel();
 
-        $quantity = intval($model->getUserProduct($bindingModel->userId, $bindingModel->productId)[0]['Quantity']);
+        $quantity = intval($userProductsModel->getUserProduct($bindingModel->userId, $bindingModel->productId)[0]['Quantity']);
         if($quantity < intval($bindingModel->quantity) || intval($bindingModel->quantity) < 1){
             return "Invalid Quantity";
         }
 
         for($i = 0; $i < intval($bindingModel->quantity); $i++){
-            $response = $model->deleteItem($bindingModel->userId, $bindingModel->productId);
+            $response = $userProductsModel->deleteItem($bindingModel->userId, $bindingModel->productId);
             if($response == 1){
-                $user = $this->getUserById($bindingModel->userId);
-                $money = floatval($user[0]['money']);
-                $moneyResponse = $this->giveMoney($bindingModel->userId, $money + floatval($bindingModel->price));
-                if($moneyResponse == 0){
+                $giveResponse = $productsModel->give($bindingModel->productId, 1);
+                if($giveResponse == 1){
+                    $user = $this->getUserById($bindingModel->userId);
+                    $money = floatval($user[0]['money']);
+                    $moneyResponse = $this->giveMoney($bindingModel->userId, $money + floatval($bindingModel->price));
+                    if($moneyResponse == 0){
+                        return 0;
+                    }
+                } else {
                     return 0;
                 }
             }

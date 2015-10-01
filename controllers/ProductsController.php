@@ -31,11 +31,11 @@ class ProductsController extends MasterController{
         $productCategory = urldecode($productCategory);
 
         if($productCategory == "all"){
-            $this->products = $this->model->find(array('where' => "LOWER(Name) like '%" . $searchTerm . "%'"));
+            $this->products = $this->model->find(array('where' => "LOWER(Name) like '%" . $searchTerm . "%' AND Quantity > 0"));
         } else {
             $category = $controller->getCategoryByName($productCategory);
             $categoryId = intval($category[0]['id']);
-            $this->products = $this->model->find(array('where' => "CategoryId=" . $categoryId . " and LOWER(Name) like '%" . $searchTerm . "%'"));
+            $this->products = $this->model->find(array('where' => "CategoryId=" . $categoryId . " and LOWER(Name) like '%" . $searchTerm . "%'  AND Quantity > 0"));
         }
 
         $this->renderView('products.php', true);
