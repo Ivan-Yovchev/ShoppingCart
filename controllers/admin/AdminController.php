@@ -9,12 +9,11 @@ class AdminController extends \Controllers\MasterController {
         $views_dir = "views\\admin\\master\\"){
 
         parent::__construct($class_name, $model, $views_dir);
+    }
 
-        $logged_user = $this->auth->get_logged_user();
-
-        if(empty($logged_user)){
-            die("No access allowed here");
-        }
+    public function test(){
+        $this->authorizeAdmin();
+        var_dump("Accessed");
     }
 
 }

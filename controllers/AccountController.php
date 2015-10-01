@@ -21,6 +21,7 @@ class AccountController extends MasterController{
             $registerResponse = $this->model->register($registerModelBind);
             if(is_bool($registerResponse) && $registerResponse == true){
                 $this->model->login($registerModelBind);
+
                 $this->addInfoMessage($registerModelBind->username . ", successfully registered");
                 $this->redirect("users", "view", array($_SESSION['user'][0]['id']));
             } else {
@@ -34,7 +35,6 @@ class AccountController extends MasterController{
 
     public function login(){
         if($this->hasLoggedUser()){
-            var_dump("logged user");
             $this->logout(true);
             $this->redirect("account", "login");
         }
@@ -43,6 +43,7 @@ class AccountController extends MasterController{
             $loginModelBind = $this->bind(new LoginBindingModel());
 
             $loggingResponse = $this->model->login($loginModelBind);
+
             if(is_bool($loggingResponse) && $loggingResponse == true){
                 $this->addInfoMessage($loginModelBind->username . " successfully logged in");
                 $this->redirect("users", "view", array($_SESSION['user'][0]['id']));

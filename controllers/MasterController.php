@@ -93,6 +93,22 @@ class MasterController {
         }
     }
 
+    protected function authorizeAdmin(){
+        if(!$this->hasLoggedUser() || $this->getLoggedUser()['role'] != 'Admin'){
+            $this->addErrorMessage("Only admins can access this page");
+            $this->redirect("account", "login");
+        }
+    }
+
+    protected function authorizeEditor(){
+        if(!$this->hasLoggedUser()
+            || $this->getLoggedUser()['role'] != 'Editor'
+            || $this->getLoggedUser()['role'] != 'Admin'){
+            $this->addErrorMessage("Only editors and admins can access this page");
+            $this->redirect("account", "login");
+        }
+    }
+
     protected function protectLoginAndRegister(){
         if(!$this->hasLoggedUser()){
             $this->addErrorMessage("Please logout first");
