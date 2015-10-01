@@ -29,14 +29,13 @@
                     <?php if($this->hasLoggedUser()): ?>
                         <ul id="menu" class="col-xs-12">
                             <?php if($this->hasLoggedUser()): ?>
-                                <li class="col-xs-6 col-sm-3"><a href="/cart/users/view/<?= $this->getLoggedUser()['username'] ?>">Home</a></li>
+                                <li><a href="/cart/users/view/<?= $this->getLoggedUser()['username'] ?>">Home</a></li>
                             <?php endif; ?>
                             <?php if(!$this->hasLoggedUser()): ?>
-                                <li class="col-xs-6 col-sm-3"><a href="/cart">Home</a></li>
+                                <li><a href="/cart">Home</a></li>
                             <?php endif; ?>
-                            <li class="col-xs-6 col-sm-3"><a href="/cart/categories/index">Categories</a></li>
-                            <li class="col-xs-6 col-sm-3"><a href="/cart/products/index/all">Products</a></li>
-                            <li class="col-xs-6 col-sm-3"><a href="/cart/users/">Users</a></li>
+                            <li><a href="/cart/categories/index">Categories</a></li>
+                            <li><a href="/cart/products/index/all">Products</a></li>
                         </ul>
                     <?php endif; ?>
                 </div>
