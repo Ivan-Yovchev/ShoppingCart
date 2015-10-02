@@ -15,20 +15,7 @@ class ProductsController extends \Controllers\ProductsController {
         parent::__construct($class_name, $model, $views_dir);
     }
 
-    public function index($category){
-        if(parent::isPost()){
-            $bindModel = $this->bind(new AddProductBindingModel());
-            $response = $this->model->addProduct($bindModel);
-            if($response == 1){
-                $this->addInfoMessage($bindModel->productName . " successfully added");
-            } else {
-                $this->addErrorMessage($response);
-            }
-//            var_dump($response); die();
-            $this->redirect("products", "index", array('all'), "editor");
-        }
-
-        $this->authorizeEditor();
+    public function index($category){$this->authorizeEditor();
         if($category != null) {
             $this->selected = $category;
         }
@@ -75,5 +62,26 @@ class ProductsController extends \Controllers\ProductsController {
     public function view($productName){
         $this->authorizeEditor();
         parent::view($productName);
+    }
+
+    public function add(){
+        $this->authorizeEditor();
+
+        if(parent::isPost()){
+            $bindModel = $this->bind(new AddProductBindingModel());
+            $response = $this->model->addProduct($bindModel);
+            if($response == 1){
+                $this->addInfoMessage($bindModel->productName . " successfully added");
+            } else {
+                $this->addErrorMessage($response);
+            }
+//            var_dump($response); die();
+            $this->redirect("products", "index", array('all'), "editor");
+        }
+
+        $controller = new \Controllers\CategoriesController();
+        $this->categories = $controller->getCategories();
+
+        $this->renderView('newProduct.php');
     }
 }
