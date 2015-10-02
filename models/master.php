@@ -47,7 +47,7 @@ class MasterModel {
 
         $query = "insert into {$this->table}($keys) values($values)";
 
-// 		var_dump($query);
+//    	var_dump($query);die();
 
         $this->db->query( $query );
 

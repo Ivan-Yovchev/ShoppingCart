@@ -41,6 +41,37 @@ class ProductModel extends MasterModel {
         return $this->update($model);
     }
 
+    public function removeProductByName($productName){
+        $productId = $this->getProductByName($productName)[0]['id'];
+        return $this->delete($productId);
+    }
+
+    public function addProduct($model){
+        if(floatval($model->price) < 0.01){
+            return "Invalid Price";
+        }
+
+        if($model->productName == ''){
+            return "Invalid Name";
+        }
+
+        if(intval($model->quantity) < 1){
+            return "Invalid Quantity";
+        }
+
+        $pairs = array(
+            'Name' => $model->productName,
+            'Price' => $model->price,
+            'Quantity' => $model->quantity,
+            'CategoryId' => $model->categoryId
+        );
+        if($model->promotionId != "null"){
+            $pairs['PromotionId'] = $model->promotionId;
+        }
+//        var_dump($pairs); die();
+        return $this->add($pairs);
+    }
+
     public function addToCart($model){
         $product = $this->getProductById(intval($model->id));
         $product = $product[0];

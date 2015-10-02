@@ -8,8 +8,11 @@ include_once "CategoriesController.php";
 
 class ProductsController extends MasterController{
 
-    public function __construct(){
-        parent::__construct(get_class(), 'product', '\\views\\product\\');
+    public function __construct(
+        $class_name = '\Controllers\ProductsController',
+        $model = 'product',
+        $views_dir = 'views\\product\\'){
+        parent::__construct($class_name, $model, $views_dir);
     }
 
     public function index($category){
@@ -38,7 +41,9 @@ class ProductsController extends MasterController{
             $this->products = $this->model->find(array('where' => "CategoryId=" . $categoryId . " and LOWER(Name) like '%" . $searchTerm . "%'  AND Quantity > 0"));
         }
 
-        $this->renderView('products.php', true);
+        if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+            $this->renderView('products.php', true);
+        }
     }
 
     public function view($productName){
@@ -57,10 +62,18 @@ class ProductsController extends MasterController{
             if(is_bool($response) && $response == true){
                 var_dump($product);
                 $this->addInfoMessage($product[0]['Name'] . " added to cart");
-                $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
+                if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
+                } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "editor");
+                }
             } else {
                 $this->addErrorMessage($response);
-                $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
+                if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
+                } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "editor");
+                }
             }
         }
 
@@ -78,7 +91,12 @@ class ProductsController extends MasterController{
             array_splice($_SESSION['cart'], $index, 1);
             var_dump($_SESSION['cart']);
             $this->addInfoMessage($productName . " successfully removed from cart");
-            $this->redirect("users", "cart");
+            if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+                $this->redirect("users", "cart");
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+                $this->redirect("users", "cart", array(), "editor");
+            }
+
         } else {
             $this->addErrorMessage("No instance of cart product with index: " . $index);
             $this->redirect("users", "cart");

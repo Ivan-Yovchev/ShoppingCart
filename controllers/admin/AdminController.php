@@ -11,9 +11,9 @@ class AdminController extends \Controllers\MasterController {
         parent::__construct($class_name, $model, $views_dir);
     }
 
-    public function test(){
+    public function index(){
         $this->authorizeAdmin();
-        var_dump("Accessed");
+        $this->renderView("index.php");
     }
 
 }

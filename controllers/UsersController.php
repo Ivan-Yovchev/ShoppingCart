@@ -9,8 +9,11 @@ include_once "ProductsController.php";
 include_once "CategoriesController.php";
 
 class UsersController extends MasterController{
-    public function __construct(){
-        parent::__construct(get_class(), 'user', '\\views\\user\\');
+    public function __construct(
+        $class_name = '\Controllers\UsersController',
+        $model = 'user',
+        $views_dir = 'views\\user\\'){
+        parent::__construct($class_name, $model, $views_dir);
     }
 
     public function index(){
@@ -94,10 +97,18 @@ class UsersController extends MasterController{
         if($response == 1){
             $_SESSION['cart'] = array();
             $this->addInfoMessage("Cart checked out successfully");
-            $this->redirect("users", "view", array($user[0]['username']));
+            if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+                $this->redirect("users", "view", array($user[0]['username']));
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+                $this->redirect("users", "view", array($user[0]['username']), "editor");
+            }
         } else {
             $this->addErrorMessage("An error occurred please try again");
-            $this->redirect("users", "cart");
+            if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
+                $this->redirect("users", "cart");
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+                $this->redirect("users", "cart", array(), "editor");
+            }
         }
     }
 

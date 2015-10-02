@@ -68,10 +68,22 @@ body {
 }
 
 #inner-image {
-    width: 100px;
+    width: 210px;
     height: 100px;
     float: none;
     margin: 0 auto;
+}
+
+#cart-logo {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+}
+
+#editor-logo {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
 }
 
 #logout {
@@ -93,6 +105,8 @@ img {
     width: 100%;
     height: 100%;
 }
+
+
 
 table {
     display: block;

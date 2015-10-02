@@ -8,7 +8,8 @@ class MasterController {
     protected $views_dir;
     protected $auth;
 
-    public function __construct($class_name = '\Controllers\MasterController',
+    public function __construct(
+            $class_name = '\Controllers\MasterController',
             $model = 'master',
             $views_dir = 'views\\master\\'){
         $this->views_dir = $views_dir;
@@ -46,11 +47,15 @@ class MasterController {
         die;
     }
 
-    protected function redirect($controller = null, $action = null, $params = []) {
+    protected function redirect($controller = null, $action = null, $params = [], $role = null) {
         if ($controller == null) {
             $controller = "master";
         }
-        $url = "/cart/$controller/$action";
+        $url = "/cart";
+        if($role != null){
+            $url .= "/$role";
+        }
+        $url .= "/$controller/$action";
         $paramsUrlEncoded = array_map('urlencode', $params);
         $paramsJoined = implode('/', $paramsUrlEncoded);
         if ($paramsJoined != '') {
@@ -102,9 +107,8 @@ class MasterController {
 
     protected function authorizeEditor(){
         if(!$this->hasLoggedUser()
-            || $this->getLoggedUser()['role'] != 'Editor'
-            || $this->getLoggedUser()['role'] != 'Admin'){
-            $this->addErrorMessage("Only editors and admins can access this page");
+            || !($this->getLoggedUser()['role'] == 'Editor' || $this->getLoggedUser()['role'] == 'Admin')){
+            $this->addErrorMessage("Only admins and editors can access this page");
             $this->redirect("account", "login");
         }
     }

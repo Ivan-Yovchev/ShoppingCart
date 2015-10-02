@@ -21,9 +21,14 @@ class AccountController extends MasterController{
             $registerResponse = $this->model->register($registerModelBind);
             if(is_bool($registerResponse) && $registerResponse == true){
                 $this->model->login($registerModelBind);
-
                 $this->addInfoMessage($registerModelBind->username . ", successfully registered");
-                $this->redirect("users", "view", array($_SESSION['user'][0]['id']));
+                if($_SESSION['user'][0]['role'] == 'Admin'){
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']), 'admin');
+                } else if($_SESSION['user'][0]['role'] == 'Editor'){
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']), 'editor');
+                } else {
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']));
+                }
             } else {
                 $this->addErrorMessage($registerResponse);
                 $this->redirect("account", "register");
@@ -46,7 +51,13 @@ class AccountController extends MasterController{
 
             if(is_bool($loggingResponse) && $loggingResponse == true){
                 $this->addInfoMessage($loginModelBind->username . " successfully logged in");
-                $this->redirect("users", "view", array($_SESSION['user'][0]['id']));
+                if($_SESSION['user'][0]['role'] == 'Admin'){
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']), 'admin');
+                } else if($_SESSION['user'][0]['role'] == 'Editor'){
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']), 'editor');
+                } else {
+                    $this->redirect("users", "view", array($_SESSION['user'][0]['username']));
+                }
             } else {
                 $this->addErrorMessage($loggingResponse);
                 $this->redirect("account", "login");

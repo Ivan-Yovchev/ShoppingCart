@@ -5,7 +5,6 @@ namespace Admin\Controllers;
 
 class UserController extends AdminController {
     public function __construct(){
-        var_dump("is admin user");
         parent::__construct(get_class(),
             'user',
             'views\\admin\\user\\');
