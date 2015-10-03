@@ -37,4 +37,14 @@ class UserproductsModel extends MasterModel {
 
         return $this->db->affected_rows;
     }
+
+    public function deleteItemNoLimit( $userId, $productId ) {
+        $query = "DELETE FROM {$this->table} WHERE UserId="
+            . intval( $userId )
+            . " AND ProductId=" . intval($productId);
+
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
+    }
 }

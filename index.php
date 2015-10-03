@@ -22,6 +22,15 @@ include_once 'models/bindingModels/RegisterBindingModel.php';
 include_once 'models/bindingModels/AddToCartBindingModel.php';
 include_once 'models/bindingModels/SellProductBindingModel.php';
 include_once 'models/bindingModels/AddProductBindingModel.php';
+include_once 'models/bindingModels/DeleteProductBindingModel.php';
+include_once 'models/bindingModels/DeleteCategoryBindingModel.php';
+include_once 'models/bindingModels/AddCategoryBindingModel.php';
+include_once 'models/bindingModels/MoveProductBindingModel.php';
+include_once 'models/bindingModels/ChangeQuantityBindingModel.php';
+include_once 'models/bindingModels/AddPromotionBindingModel.php';
+include_once 'models/bindingModels/PromoteProductBindingModel.php';
+include_once 'models/bindingModels/PromoteCategoryBindingModel.php';
+include_once 'models/bindingModels/PromoteAllBindingModel.php';
 
 if(!empty($request)){
     if(0 === strpos($request, $request_home)) {

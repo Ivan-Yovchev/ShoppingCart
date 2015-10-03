@@ -2,6 +2,8 @@
 
 namespace Models;
 
+include_once DX_ROOT_DIR . "models/promotionproducts.php";
+
 class ProductModel extends MasterModel {
     public function __construct($args = array()){
         parent::__constuct(array('table' => 'products'));
@@ -12,8 +14,9 @@ class ProductModel extends MasterModel {
     }
 
     public function getUserProduct($productId){
+        $productId = intval($productId);
         return $this->find(array(
-            'columns' => 'id, Name, Price, PromotionId, CategoryId',
+            'columns' => 'id, Name, Price, CategoryId',
             'where' => "id=" . $productId
         ));
     }
@@ -41,9 +44,24 @@ class ProductModel extends MasterModel {
         return $this->update($model);
     }
 
-    public function removeProductByName($productName){
-        $productId = $this->getProductByName($productName)[0]['id'];
-        return $this->delete($productId);
+    public function removeProductById($model){
+        $promotionProductsModel = new \Models\PromotionproductsModel();
+        $response = $promotionProductsModel->deleteByProductId($model->productId);
+        if($response < 0){
+            return 0;
+        }
+
+        return $this->delete($model->productId);
+    }
+
+    public function deleteProductById($id){
+        $promotionProductsModel = new \Models\PromotionproductsModel();
+        $response = $promotionProductsModel->deleteByProductId($id);
+        if($response < 0){
+            return 0;
+        }
+
+        return $this->delete($id);
     }
 
     public function addProduct($model){
@@ -65,9 +83,6 @@ class ProductModel extends MasterModel {
             'Quantity' => $model->quantity,
             'CategoryId' => $model->categoryId
         );
-        if($model->promotionId != "null"){
-            $pairs['PromotionId'] = $model->promotionId;
-        }
 //        var_dump($pairs); die();
         return $this->add($pairs);
     }
@@ -75,6 +90,10 @@ class ProductModel extends MasterModel {
     public function addToCart($model){
         $product = $this->getProductById(intval($model->id));
         $product = $product[0];
+
+        $promotionProductsModel = new \Models\PromotionproductsModel();
+        $promotion = $promotionProductsModel->getBiggestPromotion($product['id']);
+
         if(intval($model->quantity) > $product['Quantity']) {
             return "Cannot order so many items";
         }
@@ -94,11 +113,59 @@ class ProductModel extends MasterModel {
         }
 
         if($inCart == false) {
-            array_push($_SESSION['cart'], array('quantity' => intval($model->quantity), 'product' => $product));
+            array_push($_SESSION['cart'], array(
+                'quantity' => intval($model->quantity),
+                'product' => $product,
+                'promotion' => $promotion
+            ));
         } else {
             return $product['Name'] . " already in cart";
         }
 
         return true;
+    }
+
+    public function getCategoryProducts($categoryId){
+        return $this->find(array("where" => "CategoryId=" . $categoryId));
+    }
+
+    public function deleteProductByCategory($id){
+        $id = intval($id);
+        $products = $this->find(array('where' => 'CategoryId=' . $id));
+        if(count($products) > 0){
+            foreach($products as $product){
+                $response = $this->deleteProductById($product['id']);
+                if($response == 0){
+                    return 0;
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    public function move($model){
+        if(intval($model->from) == intval($model->to)){
+            return "Already in this category";
+        }
+
+        $pairs = array(
+            'id' => $model->productId,
+            'CategoryId' => $model->to
+        );
+        return $this->update($pairs);
+    }
+
+    public function changeQuantity($model){
+        $pairs = array(
+            'id' => $model->productId,
+            'Quantity' => $model->quantity
+        );
+
+        return $this->update($pairs);
+    }
+
+    public function getAllProducts(){
+        return $this->find();
     }
 }

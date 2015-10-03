@@ -17,6 +17,9 @@
             <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"): ?>
                 <a href="/cart/editor/users/cart">Cart</a>
             <?php endif ?>
+            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"): ?>
+                <a href="/cart/admin/users/cart">Cart</a>
+            <?php endif ?>
             <?php if($this->hasLoggedUser()): ?>
                 <a href="/cart/account/logout" id="logout-button" class="btn btn-info">Logout</a>
             <?php endif; ?>
@@ -32,24 +35,52 @@
                                 <img src="/cart/styles/editor.png" />
                             </div>
                         <?php endif; ?>
+                        <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"): ?>
+                            <div id="editor-logo">
+                                <img src="/cart/styles/admin.png" />
+                            </div>
+                        <?php endif; ?>
                 </div>
             </div>
             <div id="nav" class="col-xs-12">
                 <div id="inner-nav" class="col-xs-12">
                     <?php if($this->hasLoggedUser()): ?>
                         <ul id="menu" class="col-xs-12">
-                            <?php if($this->getLoggedUser()['role'] == 'User'): ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'User'): ?>
                                 <li><a href="/cart/users/view/<?= $this->getLoggedUser()['username']?>">Home</a></li>
                             <?php endif; ?>
-                            <?php if($this->getLoggedUser()['role'] == 'Editor'): ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'Editor'): ?>
                                 <li><a href="/cart/editor/users/view/<?= $this->getLoggedUser()['username']?>">Home</a></li>
                             <?php endif; ?>
-                            <li><a href="/cart/categories/index">Categories</a></li>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'Admin'): ?>
+                                <li><a href="/cart/admin/users/view/<?= $this->getLoggedUser()['username']?>">Home</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'User'): ?>
+                                <li><a href="/cart/categories/index">Categories</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'Editor'): ?>
+                                <li><a href="/cart/editor/categories/index">Categories</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == 'Admin'): ?>
+                                <li><a href="/cart/admin/categories/index">Categories</a></li>
+                            <?php endif; ?>
                             <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"): ?>
                                 <li><a href="/cart/products/index/all">Products</a></li>
                             <?php endif; ?>
                             <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"): ?>
                                 <li><a href="/cart/editor/products/index/all">Products</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"): ?>
+                                <li><a href="/cart/admin/products/index/all">Products</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"): ?>
+                                <li><a href="/cart/editor/promotions/index">Promotions</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"): ?>
+                                <li><a href="/cart/admin/promotions/index">Promotions</a></li>
+                            <?php endif; ?>
+                            <?php if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"): ?>
+                                <li><a href="/cart/admin/users/accounts">Users</a></li>
                             <?php endif; ?>
                         </ul>
                     <?php endif; ?>

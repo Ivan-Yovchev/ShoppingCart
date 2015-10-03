@@ -8,5 +8,6 @@
     <label class="col-xs-5" for="pass_confirm">Confirm</label>
     <input class="col-xs-7" type="password" name="confirm" id="pass_confirm"/>
     <br />
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input class="btn btn-primary" type="submit" value="Register" /> or <a href="/cart/account/login">Login</a>
 </form>

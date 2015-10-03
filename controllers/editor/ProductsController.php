@@ -3,9 +3,13 @@
 namespace Editor\Controllers;
 
 use BindingModels\AddProductBindingModel;
+use BindingModels\ChangeQuantityBindingModel;
+use BindingModels\DeleteProductBindingModel;
+use BindingModels\MoveProductBindingModel;
 
 include_once DX_ROOT_DIR . "controllers/ProductsController.php";
 include_once DX_ROOT_DIR . "controllers/CategoriesController.php";
+include_once DX_ROOT_DIR . "models/promotionproducts.php";
 
 class ProductsController extends \Controllers\ProductsController {
     public function __construct(
@@ -32,31 +36,67 @@ class ProductsController extends \Controllers\ProductsController {
         $controller = new \Controllers\CategoriesController();
         $productCategory = urldecode($productCategory);
 
+        $promotionProductsModel = new \Models\PromotionproductsModel();
+
         if($productCategory == "all"){
             $this->products = $this->model->find(array('where' => "LOWER(Name) like '%" . $searchTerm . "%' AND Quantity > 0"));
-//            var_dump($this->products);
         } else {
             $category = $controller->getCategoryByName($productCategory);
             $categoryId = intval($category[0]['id']);
             $this->products = $this->model->find(array('where' => "CategoryId=" . $categoryId . " and LOWER(Name) like '%" . $searchTerm . "%'  AND Quantity > 0"));
         }
 
-        if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
+        for($i = 0; $i < count($this->products); $i++){
+            $promotions = $promotionProductsModel->checkForPromotions($this->products[$i]['id']);
+            $isPromoted = false;
+            foreach($promotions as $promotion){
+                if($promotionProductsModel->verifyPromotion($promotion['Promotions_id']) == 1){
+                    $isPromoted = true;
+                    break;
+                }
+            }
+            $this->products[$i]['promoted'] = $isPromoted;
+        }
+
+        if($this->hasLoggedUser() && ($this->getLoggedUser()['role'] == "Editor" || $this->getLoggedUser()['role'] == "Admin")){
             $this->renderView('products.php', true);
         }
     }
 
     public function remove($productName){
         $this->authorizeEditor();
+
         $productName = urldecode($productName);
-        $result = $this->model->removeProductByName($productName);
-        if($result == 1){
-            $this->addInfoMessage($productName . ' successfully removed');
-            $this->redirect("products", "index", array('all'), "editor");
-        } else {
-            $this->addErrorMessage("An error occurred please try again");
-            $this->redirect("products", "index", array('all'), "editor");
+
+        $productController = new \Controllers\ProductsController();
+        $categoryController = new \Controllers\CategoriesController();
+        $this->product = $productController->getProductByName($productName)[0];
+        $this->category = $categoryController->getCategoryById($this->product['CategoryId'])[0];
+
+        if(parent::isPost()){
+            $model = $this->bind(new DeleteProductBindingModel());
+            $result = $this->model->removeProductById($model);
+            if($result == 1){
+                $this->addInfoMessage('Successfully removed product');
+
+                if($this->getLoggedUser()['role'] == 'Editor'){
+                    $this->redirect("products", "index", array('all'), "editor");
+                } else if($this->getLoggedUser()['role'] == 'Admin'){
+                    $this->redirect("products", "index", array('all'), "admin");
+                }
+
+            } else {
+                $this->addErrorMessage("An error occurred please try again");
+
+                if($this->getLoggedUser()['role'] == 'Editor'){
+                    $this->redirect("products", "index", array('all'), "editor");
+                } else if($this->getLoggedUser()['role'] == 'Admin'){
+                    $this->redirect("products", "index", array('all'), "admin");
+                }
+
+            }
         }
+        $this->renderView('removeProduct.php');
     }
 
     public function view($productName){
@@ -76,12 +116,75 @@ class ProductsController extends \Controllers\ProductsController {
                 $this->addErrorMessage($response);
             }
 //            var_dump($response); die();
-            $this->redirect("products", "index", array('all'), "editor");
+
+            if($this->getLoggedUser()['role'] == 'Editor'){
+                $this->redirect("products", "index", array('all'), "editor");
+            } else if($this->getLoggedUser()['role'] == 'Admin'){
+                $this->redirect("products", "index", array('all'), "admin");
+            }
+
         }
 
         $controller = new \Controllers\CategoriesController();
         $this->categories = $controller->getCategories();
 
         $this->renderView('newProduct.php');
+    }
+
+    public function move($productName){
+        $this->authorizeEditor();
+
+        $productName = urldecode($productName);
+
+        $categoriesController = new \Controllers\CategoriesController();
+
+        $this->product = $this->getProductByName($productName)[0];
+        $this->category = $categoriesController->getCategoryById($this->product['CategoryId'])[0];
+        $this->categories = $categoriesController->getCategories();
+
+        if(parent::isPost()){
+            $model = $this->bind(new MoveProductBindingModel());
+            $response = $this->model->move($model);
+            if($response == 1){
+                $this->addInfoMessage("Successfully moved product");
+            } else if(is_bool($response)) {
+                $this->addErrorMessage("An error occurred please try again");
+            } else {
+                $this->addErrorMessage($response);
+            }
+
+            if($this->getLoggedUser()['role'] == 'Editor'){
+                $this->redirect("products", "index", array('all'), "editor");
+            } else if($this->getLoggedUser()['role'] == 'Admin'){
+                $this->redirect("products", "index", array('all'), "admin");
+            }
+
+        }
+
+        $this->renderView("moveProduct.php");
+    }
+
+    public function change($productName){
+        $productName = urldecode($productName);
+        $this->product = $this->getProductByName($productName)[0];
+
+        if(parent::isPost()){
+            $model = $this->bind(new ChangeQuantityBindingModel());
+            $response = $this->model->changeQuantity($model);
+            if($response == 1){
+                $this->addInfoMessage("Successfully changed quantity");
+            } else {
+                $this->addErrorMessage("An error occurred please try again");
+            }
+
+            if($this->getLoggedUser()['role'] == 'Editor'){
+                $this->redirect("products", "index", array('all'), 'editor');
+            } else if($this->getLoggedUser()['role'] == 'Admin'){
+                $this->redirect("products", "index", array('all'), 'admin');
+            }
+
+        }
+
+        $this->renderView("changeQuantity.php");
     }
 }

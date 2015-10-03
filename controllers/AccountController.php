@@ -15,7 +15,16 @@ class AccountController extends MasterController{
             $this->redirect("account", "register");
         }
 
+        if(!isset($_POST['token'])){
+            $_SESSION['token'] = hash('sha256', microtime());
+        }
+
         if(parent::isPost() == true){
+
+            if($_POST['token'] != $_SESSION['token']){
+                exit;
+            }
+
             $registerModelBind = $this->bind(new RegisterBindingModel());
 
             $registerResponse = $this->model->register($registerModelBind);
@@ -44,7 +53,15 @@ class AccountController extends MasterController{
             $this->redirect("account", "login");
         }
 
+        if(!isset($_POST['token'])){
+            $_SESSION['token'] = hash('sha256', microtime());
+        }
+
         if(parent::isPost() == true){
+            if($_POST['token'] != $_SESSION['token']){
+                exit;
+            }
+
             $loginModelBind = $this->bind(new LoginBindingModel());
 
             $loggingResponse = $this->model->login($loginModelBind);

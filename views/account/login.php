@@ -5,5 +5,6 @@
     <label class="col-xs-5" for="pass">Password</label>
     <input class="col-xs-7" type="password" name="password" id="pass"/>
     <br />
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input class="btn btn-primary" type="submit" value="Login" /> or <a href="/cart/account/register">Register</a>
 </form>

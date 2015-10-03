@@ -7,6 +7,7 @@ use BindingModels\SellProductBindingModel;
 include_once "UserproductsController.php";
 include_once "ProductsController.php";
 include_once "CategoriesController.php";
+include_once DX_ROOT_DIR . "models/promotionproducts.php";
 
 class UsersController extends MasterController{
     public function __construct(
@@ -47,6 +48,8 @@ class UsersController extends MasterController{
         $productsController = new ProductsController();
         $categoriesController = new CategoriesController();
 
+        $promotionProductModel = new \Models\PromotionproductsModel();
+
         for($i = 0; $i < count($userProducts); $i++){
             $productId = $userProducts[$i]['ProductId'];
             $userProduct = $productsController->model->getUserProduct($productId)[0];
@@ -55,6 +58,8 @@ class UsersController extends MasterController{
             $categoryId = $userProduct["CategoryId"];
             $category = $categoriesController->model->getCategoryById($categoryId)[0];
             $userProducts[$i]['category'] = $category;
+
+            $userProducts[$i]['promotion'] = $promotionProductModel->getBiggestPromotion($productId);
         }
 
 //        foreach($userProducts as $product){
@@ -80,8 +85,13 @@ class UsersController extends MasterController{
 
         foreach($_SESSION['cart'] as $product){
             $quantity = $product['quantity'];
-            $price = floatval($product['product']['Price']);
-            $totalPrice += $quantity * $price;
+            if(empty($product['promotion'])){
+                $price = floatval($product['product']['Price']);
+                $totalPrice += $quantity * $price;
+            } else {
+                $price = ((100 - intval($product['promotion']['discount'])) / 100) * floatval($product['product']["Price"]);
+                $totalPrice += $quantity * $price;
+            }
         }
 
         $userId = intval($this->getLoggedUser()['id']);
@@ -101,6 +111,8 @@ class UsersController extends MasterController{
                 $this->redirect("users", "view", array($user[0]['username']));
             } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
                 $this->redirect("users", "view", array($user[0]['username']), "editor");
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"){
+                $this->redirect("users", "view", array($user[0]['username']), "admin");
             }
         } else {
             $this->addErrorMessage("An error occurred please try again");
@@ -108,6 +120,8 @@ class UsersController extends MasterController{
                 $this->redirect("users", "cart");
             } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
                 $this->redirect("users", "cart", array(), "editor");
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"){
+                $this->redirect("users", "cart", array(), "admin");
             }
         }
     }

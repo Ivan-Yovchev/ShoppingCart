@@ -4,8 +4,11 @@ namespace Controllers;
 
 
 class CategoriesController extends MasterController{
-    public function __construct(){
-        parent::__construct(get_class(), 'category', '\\views\\categories\\');
+    public function __construct(
+        $class_name = '\Controllers\CategoriesController',
+        $model = 'category',
+        $views_dir = 'views\\categories\\'){
+        parent::__construct($class_name, $model, $views_dir);
     }
 
     public function index(){

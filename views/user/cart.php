@@ -10,16 +10,42 @@
                         <h4><?= $products[$i]['product']['Name'] ?></h4>
                     </div>
                     <div>
-                        <span>
-                            <i><?= $products[$i]['quantity'] ?></i> x
-                            <i><?= $products[$i]['product']['Price'] ?></i> =
-                            <b>
-                                <?php
+                        <?php if(empty($products[$i]['promotion'])): ?>
+                            <span>
+                                <i><?= $products[$i]['quantity'] ?></i> x
+                                <i><?= $products[$i]['product']['Price'] ?></i> =
+                                <b>
+                                    <?php
                                     $totalPrice += $products[$i]['quantity']*floatval($products[$i]['product']['Price']);
                                     echo number_format($products[$i]['quantity']*floatval($products[$i]['product']['Price']), 2, '.', '');
-                                ?>
-                            </b>
-                        </span>
+                                    ?>
+                                </b>
+                            </span>
+                        <?php endif; ?>
+                        <?php if(!empty($products[$i]['promotion'])): ?>
+                            <span>
+                                <strike>
+                                    <i><?= $products[$i]['quantity'] ?></i> x
+                                    <i><?= $products[$i]['product']['Price'] ?></i> =
+                                    <b>
+                                        <?php
+                                        echo number_format($products[$i]['quantity']*floatval($products[$i]['product']['Price']), 2, '.', '');
+                                        ?>
+                                    </b>
+                                </strike>
+                            </span>
+                            <div>
+                                <i><?= $products[$i]['quantity'] ?></i> x
+                                <i><?= number_format((((100 - intval($products[$i]['promotion']['discount'])) / 100)  * floatval($products[$i]['product']['Price'])), '2', '.', '') ?></i> =
+                                <b>
+                                    <?php
+                                        $number = (((100 - intval($products[$i]['promotion']['discount'])) / 100)  * floatval($products[$i]['product']['Price']));
+                                        $totalPrice += $number * $products[$i]['quantity'];
+                                        echo number_format($number * $products[$i]['quantity'], 2, '.', '');
+                                    ?>
+                                </b>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <a href="/cart/products/removeFromCart/<?= $i ?>">Remove</a>
                 </li>

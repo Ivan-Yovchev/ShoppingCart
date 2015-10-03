@@ -14,6 +14,11 @@ class UserModel extends MasterModel {
         return $this->find(array('where' => 'id=' . $id, 'columns' => "id, username, money, role"));
     }
 
+    public function getUserByUsername($username) {
+        $username = urldecode($username);
+        return $this->find(array('where' => "username='" . $username . "'"));
+    }
+
     public function checkout($id, $balance, $price){
         $response = $this->subtractMoney($id, $balance, $price);
         if($response == 1){
@@ -82,5 +87,15 @@ class UserModel extends MasterModel {
             'money' => $amount
         );
         return $this->update($model);
+    }
+
+    public function removeUserItem($model){
+        $userProductsModel = new \Models\UserproductsModel();
+        $response = $userProductsModel->deleteItemNoLimit($model->userId, $model->productId);
+        if($response > 0){
+            return 1;
+        }
+
+        return 0;
     }
 }

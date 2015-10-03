@@ -5,6 +5,7 @@ namespace Controllers;
 use BindingModels\AddToCartBindingModel;
 
 include_once "CategoriesController.php";
+include_once DX_ROOT_DIR . "models/promotionproducts.php";
 
 class ProductsController extends MasterController{
 
@@ -33,12 +34,26 @@ class ProductsController extends MasterController{
         $controller = new CategoriesController();
         $productCategory = urldecode($productCategory);
 
+        $promotionProductsModel = new \Models\PromotionproductsModel();
+
         if($productCategory == "all"){
             $this->products = $this->model->find(array('where' => "LOWER(Name) like '%" . $searchTerm . "%' AND Quantity > 0"));
         } else {
             $category = $controller->getCategoryByName($productCategory);
             $categoryId = intval($category[0]['id']);
             $this->products = $this->model->find(array('where' => "CategoryId=" . $categoryId . " and LOWER(Name) like '%" . $searchTerm . "%'  AND Quantity > 0"));
+        }
+
+        for($i = 0; $i < count($this->products); $i++){
+            $promotions = $promotionProductsModel->checkForPromotions($this->products[$i]['id']);
+            $isPromoted = false;
+            foreach($promotions as $promotion){
+                if($promotionProductsModel->verifyPromotion($promotion['Promotions_id']) == 1){
+                    $isPromoted = true;
+                    break;
+                }
+            }
+            $this->products[$i]['promoted'] = $isPromoted;
         }
 
         if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
@@ -56,16 +71,20 @@ class ProductsController extends MasterController{
         $this->product = $product[0];
         $this->category = $category[0];
 
+        $productPromotionsModel = new \Models\PromotionproductsModel();
+        $this->promotion = $productPromotionsModel->getBiggestPromotion($product[0]['id']);
+
         if(parent::isPost()){
             $model = $this->bind(new AddToCartBindingModel());
             $response = $this->model->addToCart($model);
             if(is_bool($response) && $response == true){
-                var_dump($product);
                 $this->addInfoMessage($product[0]['Name'] . " added to cart");
                 if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
                     $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
                 } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
                     $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "editor");
+                } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "admin");
                 }
             } else {
                 $this->addErrorMessage($response);
@@ -73,6 +92,8 @@ class ProductsController extends MasterController{
                     $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))));
                 } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
                     $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "editor");
+                } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"){
+                    $this->redirect("products", "index", array(htmlentities(urlencode(strtolower($category[0]['Name'])))), "admin");
                 }
             }
         }
@@ -95,6 +116,8 @@ class ProductsController extends MasterController{
                 $this->redirect("users", "cart");
             } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Editor"){
                 $this->redirect("users", "cart", array(), "editor");
+            } else if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "Admin"){
+                $this->redirect("users", "cart", array(), "admin");
             }
 
         } else {

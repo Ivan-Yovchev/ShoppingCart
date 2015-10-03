@@ -13,7 +13,7 @@
             <?php endforeach; ?>
         </select>
     </div>
-    <button>
+    <button id="add-product-btn">
         <a href="http://localhost/cart/editor/products/add">
             Add Product
         </a>
