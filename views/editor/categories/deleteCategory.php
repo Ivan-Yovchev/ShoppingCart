@@ -1,4 +1,4 @@
-<div>
+<div class="center">
     <h2><?= $this->category['Name'] ?></h2>
     <div><b>Products in category:</b> <?= $this->category['count'] ?></div>
     <form method="post">

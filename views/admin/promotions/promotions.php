@@ -1,4 +1,4 @@
-<ul>
+<ul  id="promotions-nav">
     <?php foreach($this->promotions as $promotion): ?>
         <li>
             <div>Discount: <b><?= $promotion['discount'] ?>%</b></div>
@@ -20,17 +20,17 @@
                     </b>
                 </span>
             </div>
+            <div id="promotion-actions">
+                <a href="/cart/admin/promotions/onproduct/<?= $promotion['id'] ?>">
+                    On Product
+                </a>
+                <a href="/cart/admin/promotions/oncategory/<?= $promotion['id'] ?>">
+                    On Category
+                </a>
+                <a href="/cart/admin/promotions/onall/<?= $promotion['id'] ?>">
+                    On All
+                </a>
+            </div>
         </li>
-        <div>
-            <a href="/cart/admin/promotions/onproduct/<?= $promotion['id'] ?>">
-                On Product
-            </a>
-            <a href="/cart/admin/promotions/oncategory/<?= $promotion['id'] ?>">
-                On Category
-            </a>
-            <a href="/cart/admin/promotions/onall/<?= $promotion['id'] ?>">
-                On All
-            </a>
-        </div>
     <?php endforeach; ?>
 </ul>

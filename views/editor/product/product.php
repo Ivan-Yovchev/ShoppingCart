@@ -9,7 +9,7 @@
             <strike>
                 <?= $this->product['Price'] ?>
             </strike>
-            <span>
+            <span class="new-price">
                 <?= number_format(((100 - intval($this->promotion['discount'])) / 100) * floatval($this->product['Price']), 2, '.', '') ?>
             </span>
         </div>

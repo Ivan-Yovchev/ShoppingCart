@@ -536,3 +536,45 @@ input[type=password] {
     border-radius: 15px;
     color: #ffffff;
 }
+
+.new-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: red;
+}
+
+#users>ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#users>ul li {
+    display: inline-block;
+    height: 50px;
+    margin-bottom: 7px;
+    line-height: 45px;
+    font-size: 1.2em;
+    margin-left: 2px;
+    width: 165px;
+    background-color: #228B22;
+    text-align: center;
+}
+
+#users>ul li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+}
+
+#cart {
+    margin-bottom: 60px;
+}
+
+#cart ul {
+    list-style-type: none;
+    padding: 0;
+}

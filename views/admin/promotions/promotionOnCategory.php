@@ -1,4 +1,4 @@
-<div>
+<div class="center">
     <div>Discount: <b><?= $this->promotion['discount'] ?>%</b></div>
     <div>
         <span>
@@ -27,6 +27,7 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+            <br>
             <input type="submit" value="Promote" />
         </form>
     </div>

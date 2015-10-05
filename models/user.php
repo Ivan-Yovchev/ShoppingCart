@@ -11,7 +11,10 @@ class UserModel extends MasterModel {
     }
 
     public function getUserById($id) {
-        return $this->find(array('where' => 'id=' . $id, 'columns' => "id, username, money, role"));
+        return $this->find(array(
+            'where' => 'id=' . $id,
+            'columns' => "id, username, money, role, banned"
+        ));
     }
 
     public function getUserByUsername($username) {

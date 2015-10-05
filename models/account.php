@@ -24,9 +24,10 @@ class AccountModel extends MasterModel {
         $hash_pass = password_hash($model->password, PASSWORD_BCRYPT);
         $money = '2000';
         $userRole = 'User';
+        $isBanned = 0;
         $registerStatement =
-            $this->db->prepare("INSERT INTO Users (username, password, role, money) VALUES (?, ?, ?, ?)");
-        $registerStatement->bind_param("ssss", $model->username, $hash_pass, $userRole, $money);
+            $this->db->prepare("INSERT INTO Users (username, password, role, money, banned) VALUES (?, ?, ?, ?, ?)");
+        $registerStatement->bind_param("ssssi", $model->username, $hash_pass, $userRole, $money, $isBanned);
         $registerStatement->execute();
         return true;
     }
@@ -44,6 +45,11 @@ class AccountModel extends MasterModel {
 
         $usersModel = new UserModel();
         $user = $usersModel->getUserById(intval($userToLogin['id']));
+        //var_dump($user); die();
+        if($user[0]['banned'] == 1){
+            return 'banned';
+        }
+
         $_SESSION['user'] = $user;
 
         return true;

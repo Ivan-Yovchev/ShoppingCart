@@ -118,4 +118,20 @@ class UsersController extends \Editor\Controllers\UsersController {
 
         $this->redirect("users", "account", array($username), "admin");
     }
+
+    public function ban($username){
+        $user = $this->model->getUserByUsername($username)[0];
+        $pairs = array(
+            'id' => $user['id'],
+            'banned' => 1
+        );
+        $response = $this->model->update($pairs);
+        if($response == 1){
+            $this->addInfoMessage($username . ' banned');
+        } else {
+            $this->addErrorMessage("An error occurred please try again");
+        }
+
+        $this->redirect("users", "account", array($username), "admin");
+    }
 }

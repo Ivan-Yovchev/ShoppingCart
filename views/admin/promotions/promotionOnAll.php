@@ -1,4 +1,4 @@
-<div>
+<div class="center">
     <div>Discount: <b><?= $this->promotion['discount'] ?>%</b></div>
     <div>
         <span>

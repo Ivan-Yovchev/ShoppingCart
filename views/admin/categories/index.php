@@ -4,13 +4,13 @@
             Add Category
         </a>
     </button>
-    <ul>
+    <ul id="categories-nav-editor">
         <?php foreach($this->categories as $category): ?>
-            <li>
-                <a href="http://localhost/cart/admin/products/index/<?= htmlentities(urlencode(strtolower($category['Name']))) ?>">
+            <li class="label label-primary">
+                <a class="cat-normal" href="http://localhost/cart/admin/products/index/<?= htmlentities(urlencode(strtolower($category['Name']))) ?>">
                     <?= htmlentities($category['Name']) ?>
                 </a>
-                <a href="http://localhost/cart/admin/categories/remove/<?= htmlentities(urlencode(strtolower($category['Name']))) ?>">
+                <a class="cat-remove" href="http://localhost/cart/admin/categories/remove/<?= htmlentities(urlencode(strtolower($category['Name']))) ?>">
                     Remove
                 </a>
             </li>

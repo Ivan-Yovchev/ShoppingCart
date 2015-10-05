@@ -1,4 +1,4 @@
-<div id="cart">
+<div id="cart" class="center">
     <?php if(empty($this->productsInCart)): ?>
         <h2>Cart is Empty</h2>
     <?php endif ?>

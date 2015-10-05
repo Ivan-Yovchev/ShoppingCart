@@ -1,4 +1,4 @@
-<div>
+<div class="center">
     <h2><?= $this->product['Name'] ?></h2>
     <div><i><?= $this->category['Name'] ?></i></div>
     <div><b>Price:</b> <?= $this->product['Price'] ?></div>

@@ -110,7 +110,6 @@ class ProductsController extends MasterController{
         if(isset($_SESSION['cart'][$index])){
             $productName = $_SESSION['cart'][$index]['product']['Name'];
             array_splice($_SESSION['cart'], $index, 1);
-            var_dump($_SESSION['cart']);
             $this->addInfoMessage($productName . " successfully removed from cart");
             if($this->hasLoggedUser() && $this->getLoggedUser()['role'] == "User"){
                 $this->redirect("users", "cart");

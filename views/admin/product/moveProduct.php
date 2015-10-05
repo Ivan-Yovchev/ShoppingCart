@@ -1,4 +1,4 @@
-<div>
+<div id="move-product">
     <h2><?= $this->product['Name'] ?></h2>
     <div><i><?= $this->category['Name'] ?></i></div>
     <form method="post">
@@ -12,6 +12,7 @@
                 </option>
             <?php endforeach; ?>
         </select>
+        <br />
         <input type="submit" value="Move">
     </form>
 </div>

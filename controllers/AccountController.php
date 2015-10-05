@@ -75,6 +75,9 @@ class AccountController extends MasterController{
                 } else {
                     $this->redirect("users", "view", array($_SESSION['user'][0]['username']));
                 }
+            } else if($loggingResponse == 'banned'){
+                $this->addErrorMessage("You are banned");
+                $this->redirect("account", "login");
             } else {
                 $this->addErrorMessage($loggingResponse);
                 $this->redirect("account", "login");

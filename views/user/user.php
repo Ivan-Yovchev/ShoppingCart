@@ -2,17 +2,24 @@
     <h2><?= htmlentities($this->user['username']) ?></h2>
     <div>Money: <i><?= $this->user['money'] ?></i></div>
     <div>
-        <?php if($this->user['role'] != "Admin" && $this->user['role'] != "Editor"): ?>
+        <?php if($this->user['role'] != "Admin" && $this->user['role'] != "Editor" && $this->user['banned'] == 0): ?>
         <button>
                 <a href="/cart/admin/users/makeeditor/<?= urlencode($this->user['username']) ?>">
                     Make Editor
                 </a>
         </button>
         <?php endif; ?>
-        <?php if($this->user['role'] != "Admin"): ?>
+        <?php if($this->user['role'] != "Admin"  && $this->user['banned'] == 0): ?>
             <button>
                 <a href="/cart/admin/users/makeadmin/<?= urlencode($this->user['username']) ?>">
                     Make Admin
+                </a>
+            </button>
+        <?php endif; ?>
+        <?php if($this->user['banned'] == 0): ?>
+            <button>
+                <a href="/cart/admin/users/ban/<?= urlencode($this->user['username']) ?>">
+                    Ban User
                 </a>
             </button>
         <?php endif; ?>

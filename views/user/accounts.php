@@ -1,4 +1,4 @@
-<div>
+<div class="center">
     <input type="text" id="search-term" placeholder="username..." />
     <div id="users">
     </div>

@@ -1,11 +1,11 @@
-<div>
-    <button>
+<div id="promotions-search">
+    <button id="promotions-btn">
         <a href="/cart/admin/promotions/add">
             Add Promotion
         </a>
     </button>
     <div>
-        <input type="text" id="search-promotion" name="searchTerm" />
+        <input placeholder="Search" type="text" id="search-promotion" name="searchTerm" />
     </div>
     <div id="promotions">
     </div>
